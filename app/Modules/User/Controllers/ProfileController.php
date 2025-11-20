@@ -36,5 +36,12 @@ class ProfileController extends Controller
 
         return response()->json($user);
     }
+
+    public function suggestions(): JsonResponse
+    {
+        $users = $this->profileService->getSuggestedUsers(auth()->id());
+
+        return response()->json(['data' => $users]);
+    }
 }
 

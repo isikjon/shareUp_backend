@@ -34,5 +34,14 @@ class ProfileService
 
         return $user;
     }
+
+    public function getSuggestedUsers($currentUserId, $limit = 5)
+    {
+        return User::where('id', '!=', $currentUserId)
+            ->where('is_banned', false)
+            ->inRandomOrder()
+            ->limit($limit)
+            ->get(['id', 'name', 'email', 'avatar', 'bio', 'points']);
+    }
 }
 

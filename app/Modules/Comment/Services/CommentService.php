@@ -5,9 +5,17 @@ namespace App\Modules\Comment\Services;
 use App\Models\Comment;
 use App\Models\Post;
 use App\Models\PointTransaction;
+use App\Services\NotificationService;
 
 class CommentService
 {
+    protected NotificationService $notificationService;
+
+    public function __construct(NotificationService $notificationService)
+    {
+        $this->notificationService = $notificationService;
+    }
+
     public function createComment($userId, $postId, array $data)
     {
         $post = Post::findOrFail($postId);
@@ -30,6 +38,15 @@ class CommentService
         ]);
 
         $comment->user->increment('points', 5);
+
+        $user = auth()->user();
+        $this->notificationService->createNotification(
+            $post->user_id,
+            $userId,
+            'comment',
+            "{$user->name} прокомментировал ваш пост: {$data['content']}",
+            $post
+        );
 
         return $comment->load('user');
     }

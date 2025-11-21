@@ -3,6 +3,7 @@
 namespace App\Modules\Comment\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\CommentResource;
 use App\Modules\Comment\Requests\CreateCommentRequest;
 use App\Modules\Comment\Services\CommentService;
 use Illuminate\Http\JsonResponse;
@@ -24,7 +25,7 @@ class CommentController extends Controller
             $request->validated()
         );
 
-        return response()->json($comment, 201);
+        return response()->json(new CommentResource($comment), 201);
     }
 
     public function destroy($id): JsonResponse
@@ -38,7 +39,13 @@ class CommentController extends Controller
     {
         $comments = $this->commentService->getComments($postId);
 
-        return response()->json($comments);
+        return response()->json([
+            'data' => CommentResource::collection($comments),
+            'current_page' => $comments->currentPage(),
+            'last_page' => $comments->lastPage(),
+            'per_page' => $comments->perPage(),
+            'total' => $comments->total(),
+        ]);
     }
 }
 

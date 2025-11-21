@@ -8,6 +8,7 @@ use App\Modules\Like\Controllers\LikeController;
 use App\Modules\Comment\Controllers\CommentController;
 use App\Modules\Point\Controllers\PointController;
 use App\Modules\Admin\Controllers\AdminController;
+use App\Http\Controllers\NotificationController;
 
 Route::prefix('auth')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
@@ -50,6 +51,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('points')->group(function () {
         Route::get('/balance', [PointController::class, 'balance']);
         Route::get('/transactions', [PointController::class, 'transactions']);
+    });
+
+    Route::prefix('notifications')->group(function () {
+        Route::get('/', [NotificationController::class, 'index']);
+        Route::get('/unread', [NotificationController::class, 'unread']);
+        Route::get('/unread/count', [NotificationController::class, 'unreadCount']);
+        Route::post('/{id}/read', [NotificationController::class, 'markAsRead']);
+        Route::post('/read-all', [NotificationController::class, 'markAllAsRead']);
     });
 
     Route::middleware('admin')->prefix('admin')->group(function () {

@@ -5,9 +5,17 @@ namespace App\Modules\Like\Services;
 use App\Models\Like;
 use App\Models\Post;
 use App\Models\PointTransaction;
+use App\Services\NotificationService;
 
 class LikeService
 {
+    protected NotificationService $notificationService;
+
+    public function __construct(NotificationService $notificationService)
+    {
+        $this->notificationService = $notificationService;
+    }
+
     public function toggleLike($userId, $postId)
     {
         $post = Post::findOrFail($postId);
@@ -46,6 +54,15 @@ class LikeService
             'transactionable_type' => Like::class,
             'transactionable_id' => $like->id,
         ]);
+
+        $user = auth()->user();
+        $this->notificationService->createNotification(
+            $post->user_id,
+            $userId,
+            'like',
+            "{$user->name} понравился ваш пост",
+            $post
+        );
 
         return [
             'liked' => true,

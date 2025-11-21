@@ -4,23 +4,20 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\Storage;
 
-class PostResource extends JsonResource
+class CommentResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
         return [
             'id' => $this->id,
             'user_id' => $this->user_id,
+            'post_id' => $this->post_id,
             'content' => $this->content,
-            'image' => $this->image ? Storage::url($this->image) : null,
-            'likes_count' => $this->likes_count,
-            'comments_count' => $this->comments_count,
-            'isLiked' => (bool) $this->isLiked,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'user' => new UserResource($this->whenLoaded('user')),
         ];
     }
 }
+
